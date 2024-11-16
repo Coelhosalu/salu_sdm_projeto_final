@@ -3,14 +3,14 @@ title: "Report - Projeto SDM"
 author: "Salu Coêlho da Silva"
 date: "2024-11-08"
 output: 
+  pdf_document:
+    latex_engine: xelatex
   html_document:
     toc: yes
     toc_depth: 3
     toc_float:
       collapsed: false
     theme: darkly
-  pdf_document:
-    latex_engine: xelatex
 editor_options: 
   chunk_output_type: inline
 ---
@@ -239,6 +239,8 @@ occ_data_sptlim_bias_sptdist
 
 #Exportando os dados 
 
+occ_data_filter <- occ_data_sptlim_bias_sptdist
+
 # vetor
 occ_data_filter %>%
   sf::st_write("dados/ocorrencias/occ_anablep_data_filter_edit.shp" , delete_layer = TRUE)
@@ -269,7 +271,6 @@ tm_shape(amazonia) +
   tm_dots(size = .2, shape = 21, col = "steelblue")
   
 ```
-occ_data_filter <- occ_data_sptlim_bias_sptdist
 
 ### **1.3.1** Variaveis ambientais
 
@@ -413,7 +414,13 @@ biomod_model <- BIOMOD_Modeling(
 ### **2.1** Curvas de resposta
 ```{r obter curva de resposta, warning = FALSE}
 # Plot response curve
-# var_plot <-
+
+env_window <- bm_PlotResponseCurves(
+  biomod_model,
+  fixed.var = 'mean', 
+  )
+
+var_plot <-
     as.data.frame(env_window$tab) %>% 
     filter(pred.val < 0.99 & pred.val > 0.1 # so os melhores
     ) %>%
